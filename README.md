@@ -14,6 +14,6 @@ Build a chat application and deploy it using AWS and DevOps tools
 -Terraform
 -Cloudwatch
 
-## priject status 
+## project status 
 day 1 - project setup completed 
 day 2 - Git and Github workflow practice
