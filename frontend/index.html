@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat Application</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .chat-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px #0001;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1e293b;
+    }
+
+    #messages {
+      min-height: 200px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .message {
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      background: #dbeafe;
+      overflow-wrap: anywhere;
+    }
+
+    form {
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chat-container">
+    <h1>AI Chat Application</h1>
+
+    <div id="messages" aria-live="polite">
+      <div class="message">Assistant: Hello! Send me a message.</div>
+    </div>
+
+    <form id="chat-form">
+      <input id="message-input"
+             type="text"
+             placeholder="Type your message..."
+             required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("message-input");
+    const messages = document.getElementById("messages");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const text = input.value.trim();
+      if (!text) return;
+
+      const userMessage = document.createElement("div");
+      userMessage.className = "message";
+      userMessage.textContent = "You: " + text;
+      messages.appendChild(userMessage);
+
+      input.value = "";
+
+      try {
+        const response = await fetch("http://localhost:3000/api/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ message: text })
+});
+        if (!response.ok) throw new Error("API request failed");
+
+        const data = await response.json();
+
+        const botMessage = document.createElement("div");
+        botMessage.className = "message";
+        botMessage.textContent = "Assistant: " + data.reply;
+        messages.appendChild(botMessage);
+      } catch (error) {
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "message";
+        errorMessage.textContent =
+          "Could not connect to the backend. Please check the server.";
+        messages.appendChild(errorMessage);
+      }
+    });
+  </script>
+</body>
+</html>
