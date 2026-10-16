@@ -83,49 +83,38 @@
       <button type="submit">Send</button>
     </form>
   </div>
-
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
   <script>
-    const form = document.getElementById("chat-form");
-    const input = document.getElementById("message-input");
-    const messages = document.getElementById("messages");
+  const socket = io("http://localhost:3000");
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+  socket.on("connect", () => {
+    console.log("Connected to Socket.IO!");
+  });
 
-      const text = input.value.trim();
-      if (!text) return;
+  socket.on("connect_error", (error) => {
+    console.log("Socket connection error:", error.message);
+  });
+  const form = document.getElementById("chat-form");
+const input = document.getElementById("message-input");
+const messages = document.getElementById("messages");
 
-      const userMessage = document.createElement("div");
-      userMessage.className = "message";
-      userMessage.textContent = "You: " + text;
-      messages.appendChild(userMessage);
-
-      input.value = "";
-
-      try {
-        const response = await fetch("http://localhost:3000/api/chat", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ message: text })
+socket.on("chat message", (data) => {
+  const item = document.createElement("div");
+  item.textContent = data.text;
+  messages.appendChild(item);
 });
-        if (!response.ok) throw new Error("API request failed");
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
 
-        const data = await response.json();
+  const text = input.value.trim();
 
-        const botMessage = document.createElement("div");
-        botMessage.className = "message";
-        botMessage.textContent = "Assistant: " + data.reply;
-        messages.appendChild(botMessage);
-      } catch (error) {
-        const errorMessage = document.createElement("div");
-        errorMessage.className = "message";
-        errorMessage.textContent =
-          "Could not connect to the backend. Please check the server.";
-        messages.appendChild(errorMessage);
-      }
-    });
-  </script>
+  if (text && socket.connected) {
+    socket.emit("chat message", text);
+    input.value = "";
+  }
+});
+</script>
 </body>
 </html>
