@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socket.IO Test</title>
+</head>
+<body>
+  <h1>Real-Time Chat Test</h1>
+  <p id="status">Connecting...</p>
+
+  <input id="message" type="text" placeholder="Type a message">
+  <button id="send">Send</button>
+
+  <ul id="messages"></ul>
+
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script>
+    const status = document.getElementById("status");
+    const messages = document.getElementById("messages");
+    const input = document.getElementById("message");
+    const socket = io("http://localhost:3000");
+
+    socket.on("connect", () => {
+      status.textContent = "Connected to Socket.IO!";
+    });
+
+    socket.on("connect_error", () => {
+      status.textContent = "Connection failed. Check backend.";
+    });
+
+    document.getElementById("send").addEventListener("click", () => {
+      const text = input.value.trim();
+
+      if (text) {
+        socket.emit("chat message", text);
+        input.value = "";
+      }
+    });
+
+    socket.on("chat message", (data) => {
+      const item = document.createElement("li");
+      item.textContent = data.text;
+      messages.appendChild(item);
+    });
+  </script>
+</body>
+</html>
