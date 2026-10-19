@@ -26,4 +26,8 @@ jobs:
       - name: Check backend JavaScript syntax
         working-directory: backend
         run: node --check server.js
-      
+      - name: Build backend Docker image
+        run: docker build -t ai-chat-backend ./backend
+
+      - name: Build frontend Docker image
+        run: docker build -t ai-chat-frontend ./frontend
