@@ -26,3 +26,4 @@ jobs:
       - name: Check backend JavaScript syntax
         working-directory: backend
         run: node --check server.js
+      
