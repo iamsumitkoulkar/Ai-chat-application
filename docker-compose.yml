@@ -4,6 +4,10 @@ services:
     container_name: ai-chat-backend-container
     ports:
       - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+     - ${USERPROFILE}/.aws:/root/.aws:ro
 
   frontend:
     build: ./frontend

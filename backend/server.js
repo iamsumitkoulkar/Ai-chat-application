@@ -2,11 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+const s3UploadRouter = require("./s3-upload");
 
 const app = express();
 const server = http.createServer(app);
 
 app.use(express.json());
+app.use("/api/files", s3UploadRouter);
 app.use (cors({ origin: "http://localhost:8080" }));
 
 const io = new Server(server, {
